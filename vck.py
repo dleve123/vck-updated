@@ -6,7 +6,7 @@
 # Written by Frank Stajano,
 # Olivetti Oracle Research Laboratory <http://www.orl.co.uk/~fms/> and
 # Cambridge University Computer Laboratory <http://www.cl.cam.ac.uk/~fms27/>.
-# 
+#
 # Visual cryptography concept invented by Moni Naor & Adi Shamir
 #
 # VCK is copyrighted free software; you can redistribute it and/or modify
@@ -97,10 +97,10 @@ class bitmap:
         if not self.__image:
             raise TypeError, "Give me EITHER a filename OR a " \
                   "(width, height) pair and an optional string of binary data."
-        
+
         self.__draw = ImageDraw.ImageDraw(self.__image)
 
-        
+
     def set(self, x, y, colour=1):
         """Set the pixel at x, y to be of colour colour (default 1 = black
         ink). Any colour value other than 0 (white paper) is taken to be 1
@@ -111,7 +111,7 @@ class bitmap:
         else:
             self.__draw.setink(bitmap._pixelBlack)
         self.__draw.point((x, y))
-        
+
     def get(self, x, y):
         """Return the value of the pixel at x, y"""
         return not self.__image.getpixel((x, y))
@@ -141,7 +141,7 @@ class bitmap:
         pixel of bmp into a grid of 4 pixels. Pixelcoding means translating
         each pixel into a grid of pixels in a clever way which is the core
         idea of visual cryptography. Read the poster for more on that."""
-        
+
         maxX, maxY = self.size()
         result = bitmap((2*maxX, 2*maxY))
         for x in range(maxX):
@@ -154,7 +154,7 @@ class bitmap:
         return result
 
 
-        
+
 def boolean(operation, bitmaps):
     """Apply the boolean operation 'operation' (a binary function of two
     integers returning an integer) to the list of bitmaps in 'bitmaps'
@@ -183,14 +183,14 @@ def XOR(*args): return boolean(lambda a,b:a^b, args)
 def NOT(bmp):
     """Take a bitmap and return its negative (obtained by swopping white
     and black at each pixel)."""
-    
+
     maxX, maxY = size = bmp.size()
     result = bitmap(size)
     for x in range(maxX):
         for y in range(maxY):
             result.set(x,y, not bmp.get(x,y))
     return result
-    
+
 
 
 def randomBitmap(size):
@@ -262,7 +262,7 @@ class _viewer:
 
     def canvas(self):
         """Return the canvas."""
-        
+
         return self._c
 
     def __del__(self):
@@ -295,7 +295,7 @@ def encrypt(rawPlaintext, rawPad = None):
     # The final versions are linearly twice as big due to pixelcoding
     ciphertext = rawCiphertext.pixelcode()
     pad = rawPad.pixelcode()
-    
+
     return ciphertext, pad
 
 def decrypt(ciphertext, pad):
@@ -313,7 +313,7 @@ def mainApp(function):
     is merely to shield the caller away from the quirks of initialising
     Tkinter, running its main loop and ensuring that windows don't
     disappear unexpectedly."""
-    
+
     root = Tkinter.Tk()
     quit = Tkinter.Button(root, text="Quit", command=root.quit)
     quit.pack()
@@ -327,13 +327,13 @@ def mainApp(function):
 # --------------------------------------------------------------
 # Analog (greyscale) version
 
-        
+
 
 class moonfieldViewer(_viewer):
     """A toplevel window with a canvas, suitable for viewing a moonfield."""
 
     R = 9 # default radius
-    
+
     def __init__(self, root, mf, title="Unnamed moonfield", radius=R):
         """Precondition: the moonfield mf must be filled."""
 
@@ -353,7 +353,7 @@ class photoViewer(_viewer):
         self._c.create_image(0, 0, anchor=Tkinter.NW, image=self.__photo)
         self._t.update()
 
-        
+
 
 class moonfield:
     """A 2d array of angles. Items in the array are indexed by integers in
@@ -386,7 +386,7 @@ class moonfield:
         self.__xmax, self.__ymax = size
         if filler:
             self.fill(filler)
-        
+
     def size(self):
         """Return a 2-tuple with the dimensions of the moonfield."""
         return self.__xmax, self.__ymax
@@ -408,7 +408,7 @@ class moonfield:
 
         def randomFiller(x,y, low=low, high=high):
             return whrandom.randint(low, high)
-        
+
         self.fill(randomFiller)
 
     def imageComplement(self, img):
@@ -463,7 +463,7 @@ class moonfield:
     def dump(self, filename):
         """Dump yourself to a file in the internal .mfd format (another
         moonfield object can later be made from such a file)."""
-        
+
         pickle.dump(self, open(filename, "w"))
 
 def moonfield_undump(filename):
@@ -506,7 +506,7 @@ def splitImage(image, shareFile1="share1.tif", shareFile2="share2.tif"):
     (a PIL type "1" or its filename) and produce two image files that, when
     superimposed, will yield the image. Return the bitmaps for the two
     shares."""
-    
+
     _, expandedPad = makePad(Image.open(image).size, shareFile1)
     expandedCiphertext = makeCryptograph(image, shareFile2)
     return expandedPad, expandedCiphertext
@@ -552,7 +552,7 @@ def splitImageG(root, image, shareFile1="share1.ps", shareFile2="share2.ps"):
     files of halfmoons that, when superimposed, will yield the
     image. Return a quadruple made of the two shares and two viewers
     showing them."""
-    
+
     if type(image) == type(""):
         image = Image.open(image).convert("L")
     p, v1 = makePadG(root, image.size, shareFile1)
@@ -566,11 +566,11 @@ def splitImageG(root, image, shareFile1="share1.ps", shareFile2="share2.ps"):
 def testEncryptDecrypt(root):
     """Encrypt a monochrome image and decrypt it, showing the results on
     screen (work in memory, don't save to files)."""
-    
+
     plaintext = bitmap("vck.gif")
     ciphertext, pad = encrypt(plaintext)
     decryptedResult = decrypt(ciphertext, pad)
-    
+
     v1 = plaintext.view(root, "plaintext")
     v2 = pad.view(root, "pad (pixelcoded)")
     v3 = ciphertext.view(root, "ciphertext (pixelcoded)")
@@ -580,13 +580,13 @@ def testEncryptDecrypt(root):
 def testAllIntermediateValues(root):
     """Encrypt a monochrome image and decrypt it, but do it all "by hand"
     and show all the intermediate results at each step."""
-    
+
     rawPlaintext = bitmap("vck.gif")
     v1 = rawPlaintext.view(root, "raw plaintext")
-    
+
     rawPad = randomBitmap(rawPlaintext.size())
     v2 = rawPad.view(root, "raw pad")
-    
+
     rawCiphertext = XOR(rawPlaintext, rawPad)
     v3 = rawCiphertext.view(root, "raw ciphertext")
 
@@ -595,7 +595,7 @@ def testAllIntermediateValues(root):
 
     ciphertext = rawCiphertext.pixelcode()
     v5 = ciphertext.view(root, "pixelcoded ciphertext")
-    
+
     decryptedResult = OR(ciphertext, pad)
     v6 = decryptedResult.view(root, "decrypted result")
 
@@ -606,7 +606,7 @@ def testBooleanOps(root):
     """Demonstrate the boolean operations available in VCK by combining an
     image (vck.tif must be in the current directory) with a diagonal
     cross."""
-    
+
     letters = bitmap("vck.tif")
     v1 = letters.view(root, "vck")
 
@@ -639,7 +639,7 @@ def testBooleanOps(root):
 def testGrey(root):
     """Look at how the pie slices appear for a test card with all the
     possible grey tones."""
-    
+
     # Make a greyscale test card: a 16x16 square going from black to white
     t = open("testcard.pgm", "wb")
     t.write("P5\n16 16\n255\n")
@@ -665,14 +665,14 @@ def testGrey(root):
 def testSplitImage(root):
     """Split a monochrome image into two shares and write these to two
     files that can be viewed externally."""
-    
+
     s1, s2 = splitImage("vck.tif")
     v = OR(s1, s2).view(root)
     return v
 
 def testSplitImageG(root):
     """Split a greyscale image into two shares (postscript files)."""
-    
+
     p, c, v1, v2 = splitImageG(root, "guido.tif")
     p.renderOnCanvas(v2.canvas())
     v2.psprint("guido-decrypted.ps")
