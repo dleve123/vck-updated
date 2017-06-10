@@ -55,6 +55,7 @@ import random
 import string
 import pickle
 import sys
+import os
 
 class bitmap:
     """A two-dimensional one-bit-deep bitmap suitable for VCK operations.
@@ -659,6 +660,10 @@ def testGrey(root):
 
     v3 = ciphertext.view(root, "decrypted ciphertext")
     pad.renderOnCanvas(v3.canvas())
+
+    testcardPath = os.path.abspath("testcard.pgm")
+    os.remove(testcardPath)
+
     return v1, v2, v3
 
 def testSplitImage(root):
