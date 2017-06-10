@@ -107,10 +107,9 @@ class bitmap:
         (black ink)."""
 
         if colour == 0:
-            self.__draw.setink(bitmap._pixelWhite)
+            self.__draw.point((x, y), bitmap._pixelWhite)
         else:
-            self.__draw.setink(bitmap._pixelBlack)
-        self.__draw.point((x, y))
+            self.__draw.point((x, y), bitmap._pixelBlack)
 
     def get(self, x, y):
         """Return the value of the pixel at x, y"""
