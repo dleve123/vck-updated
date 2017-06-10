@@ -48,10 +48,10 @@ important than making the program fast.
 """
 
 import Tkinter
-import Image
-import ImageDraw
-import ImageTk
-import whrandom
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageTk
+import random
 import string
 import pickle
 import sys
@@ -206,7 +206,7 @@ def randomBitmap(size):
     xmax, ymax = size
     for x in xrange(xmax):
         for y in xrange(ymax):
-            b.set(x, y, whrandom.randint(0,1))
+            b.set(x, y, random.randint(0,1))
     return b
 
 
@@ -407,7 +407,7 @@ class moonfield:
         just playing around."""
 
         def randomFiller(x,y, low=low, high=high):
-            return whrandom.randint(low, high)
+            return random.randint(low, high)
 
         self.fill(randomFiller)
 
